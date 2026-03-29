@@ -2,7 +2,10 @@
 
 namespace Database\Factories\Modules;
 
+use App\Enums\PropulsionType;
+use App\Models\Module;
 use App\Models\Modules\Propulsion;
+use Faker\Provider\FakeCar;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +21,9 @@ class PropulsionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'module_id'     => Module::factory(),
+            'type'          => fake()->randomElement(PropulsionType::class),
+            'horsepower'    => fake()->vehicleEnginePowerValue(),
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Factories\Modules;
 
+use App\Enums\UpholsteryType;
+use App\Models\Module;
 use App\Models\Modules\Chair;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +20,9 @@ class ChairFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'module_id' => Module::factory(),
+            'type'      => fake()->randomElement(UpholsteryType::class),
+            'amount'    => fake()->numberBetween(0, 50),
         ];
     }
 }

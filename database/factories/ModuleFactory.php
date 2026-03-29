@@ -18,7 +18,10 @@ class ModuleFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name'  => fake()->word(),
+            'price' => fake()->randomFloat(2, 100, 10000),
+            'time'  => fake()->numberBetween(1, 2),
+            'image' => 'https://placehold.co/600x400/000000/FFFFFF.png'
         ];
     }
 }

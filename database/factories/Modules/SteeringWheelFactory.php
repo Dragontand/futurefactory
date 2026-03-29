@@ -2,6 +2,8 @@
 
 namespace Database\Factories\Modules;
 
+use App\Enums\SteeringWheelType;
+use App\Models\Module;
 use App\Models\Modules\SteeringWheel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +20,9 @@ class SteeringWheelFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'module_id'         => Module::factory(),
+            'type'              => fake()->randomElement(SteeringWheelType::class),
+            'special_request'   => fake()->sentences(asText:true),
         ];
     }
 }

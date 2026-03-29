@@ -2,13 +2,29 @@
 
 namespace App\Models\Modules;
 
+use App\Enums\VehicleType;
 use App\Models\Module;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Chassis extends Module
+class Chassis extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\ChassisFactory> */
     use HasFactory;
+    // Module model already has a timestamp
+    public $timestamps = false;
+    // Assign the PK from Module to subclass
+    protected $primaryKey = 'module_id';
 
-    protected static string $moduleType = 'chassis';
+    protected $guarded = [];
+    
+    protected $casts = [
+        'type' => VehicleType::class
+    ];
+
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(Module::class, 'module_id');
+    }
 }

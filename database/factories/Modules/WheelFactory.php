@@ -2,6 +2,8 @@
 
 namespace Database\Factories\Modules;
 
+use App\Enums\WheelType;
+use App\Models\Module;
 use App\Models\Modules\Wheel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +20,9 @@ class WheelFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'module_id'             => Module::factory(),
+            'type'                  => fake()->randomElement(WheelType::class),
+            'diameter'              => fake()->numberBetween(125, 1000),
         ];
     }
 }

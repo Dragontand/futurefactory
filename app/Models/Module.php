@@ -9,46 +9,37 @@ use App\Models\Modules\SteeringWheel;
 use App\Models\Modules\Wheel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-abstract class Module extends Model
+// Abstract and is enforced via an observer.
+class Module extends Model
 {
-    /** @use HasFactory<\Database\Factories\ModuleFactory> */
     use HasFactory;
 
-    protected static string $moduleType;
+    protected $guarded = [];
 
-    protected static array $typeMap = [
-        'chassis'           => Chassis::class,
-        'propulsion'        => Propulsion::class,
-        'wheel'             => Wheel::class,
-        'steering_wheel'    => SteeringWheel::class,
-        'chair'             => Chair::class,
-    ];
-    // Runs when the model class is first loaded by laravel.
-    protected static function booted(): void
+    public function chassis(): HasOne
     {
-        // Makes Eloquent automatically fill in the type when a new model is created.
-        static::creating(function (self $model) {
-            $model->type = static::$moduleType;
-        });
-        // Makes Eloquent add an automatic WHERE clause when querying a specific Module subclass.
-        // Skipped when called directly on the Module model itself, so Module::all() returns everything.
-        static::addGlobalScope(function ($query) {
-            if (isset(static::$moduleType)) {
-                $query->where('type', static::$moduleType);
-            }
-        });
+        return $this->hasOne(Chassis::class, 'module_id');
     }
-    // Overrides Eloquent's default method so that each db row is returned 
-    // as the correct subclass, instead of the Module Model.
-    public function newFromBuilder($attributes = [], $connection = null): static
+
+    public function propulsion(): HasOne
     {
-        $type  = $attributes['type'] ?? null;
-        $class = static::$typeMap[$type] ?? static::class;
+        return $this->hasOne(Propulsion::class, 'module_id');
+    }
 
-        $model = (new $class)->newInstance([], true);
-        $model->setRawAttributes((array) $attributes, true);
+    public function wheel(): HasOne
+    {
+        return $this->hasOne(Wheel::class, 'module_id');
+    }
 
-        return $model;
+    public function steeringWheel(): HasOne
+    {
+        return $this->hasOne(SteeringWheel::class, 'module_id');
+    }
+
+    public function chair(): HasOne
+    {
+        return $this->hasOne(Chair::class, 'module_id');
     }
 }
