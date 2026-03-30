@@ -84,5 +84,6 @@ return new class extends Migration
         Schema::dropIfExists('wheels');
         Schema::dropIfExists('steering_wheels');
         Schema::dropIfExists('chairs');
+        Schema::dropIfExists('chassis_wheel');
     }
 };
