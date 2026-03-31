@@ -47,7 +47,6 @@ return new class extends Migration
             $table->foreignId('module_id')->primary()->constrained()->cascadeOnDelete();
             $table->enum('type', array_column(WheelType::cases(), 'value'));
             $table->integer('diameter');
-            //$table->foreignIdFor(Chassis::class, 'compatible_chassis_id')->constrained('chassis', 'module_id')->cascadeOnDelete();
         });
 
         Schema::create('steering_wheels', function (Blueprint $table) {

@@ -21,7 +21,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/profile', 'destroy')->name('profile.destroy');
     });
 
-    Route::middleware('role:admin, buyer')->group(function () {
+    Route::middleware('role:admin,buyer')->group(function () {
+        Route::post('modules/type', [ModuleController::class, 'storeType'])
+        ->name('modules.storeType');
+
         Route::resource('modules', ModuleController::class);
     });
 });

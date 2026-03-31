@@ -8,6 +8,13 @@ use App\Http\Requests\UpdateModuleRequest;
 
 class ModuleController extends Controller
 {
+    private $modules = [
+        'chassis'         => 'Chassis', 
+        'propulsion'      => 'Propulsion', 
+        'wheel'           => 'Wheel', 
+        'steering_wheel'  => 'Steering wheel', 
+        'chair'           => 'Chair'
+    ];
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +29,24 @@ class ModuleController extends Controller
      */
     public function create()
     {
-        return view('modules.create');
+        if (session()->has('module_type')) {
+            // makes sur eit is kept for the next page
+            session()->reflash(); 
+        }
+        return view('modules.create', ['modules' => $this->modules]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeType(StoreModuleRequest $request)
+    {
+        $request->validate([
+            'type' => 'required|in:' . implode(",", array_keys($this->modules))
+        ]);
+
+        return redirect()->route('modules.create')
+            ->with('module_type', $request->type);;
     }
 
     /**
