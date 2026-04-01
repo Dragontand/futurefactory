@@ -6,15 +6,18 @@ use App\Models\Module;
 use App\Http\Requests\ModuleRequest;
 use App\Http\Requests\UpdateModuleRequest;
 use App\Services\ModuleCreationService;
-
+use App\Services\ModuleUpdateService;
+use Illuminate\Http\Request;
 
 class ModuleController extends Controller
 {
-    private ModuleCreationService $moduleService;
+    private ModuleCreationService $moduleCreationService;
+    private ModuleUpdateService $moduleUpdateService;
 
-    public function __construct(ModuleCreationService $moduleService)
+    public function __construct(ModuleCreationService $moduleCreationService, ModuleUpdateService $moduleUpdateService)
     {
-        $this->moduleService = $moduleService;
+        $this->moduleCreationService = $moduleCreationService;
+        $this->moduleUpdateService = $moduleUpdateService;
     }
 
     private $modules = [
@@ -29,7 +32,7 @@ class ModuleController extends Controller
      */
     public function index()
     {
-        $modules = Module::with(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair'])->simplePaginate(15);
+        $modules = Module::with(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair'])->latest()->simplePaginate(15);
         return view('modules.index', [
             'modules' => $modules
         ]);
@@ -40,24 +43,30 @@ class ModuleController extends Controller
      */
     public function create()
     {
-        if (session()->has('module_type')) {
-            // makes sur eit is kept for the next page
-            session()->reflash(); 
-        }
         return view('modules.create', ['modules' => $this->modules]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * For cancelling the session
      */
-    public function storeType(ModuleRequest $request)
+    public function cancel()
+    {
+        session()->forget('module_type');
+        return redirect()->route('modules.index');
+    }
+
+    /**
+     * Store the module type in the session
+     */
+    public function storeType(Request $request)
     {
         $request->validate([
             'type' => 'required|in:' . implode(",", array_keys($this->modules))
         ]);
 
-        return redirect()->route('modules.create')
-            ->with('module_type', $request->type);;
+        session(['module_type' => $request->type]);
+
+        return redirect()->route('modules.create');
     }
 
     /**
@@ -65,7 +74,7 @@ class ModuleController extends Controller
      */
     public function store(ModuleRequest $request)
     {
-        $this->moduleService->createModule(session('module_type'), $request->validated());
+        $this->moduleCreationService->createModule(session('module_type'), $request->validated());
 
         session()->forget('module_type');
 
@@ -78,6 +87,7 @@ class ModuleController extends Controller
      */
     public function show(Module $module)
     {
+        $module->load(['wheel.compatibleChassis.module']);
         return view('modules.show', ['module' => $module]);
     }
 
@@ -86,7 +96,10 @@ class ModuleController extends Controller
      */
     public function edit(Module $module)
     {
-        return view('modules.edit', ['module' => $module]);
+        $module->load(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair']);
+        return view('modules.edit', [
+            'module' => $module,
+            'modules' => $this->modules]);
     }
 
     /**
@@ -94,7 +107,10 @@ class ModuleController extends Controller
      */
     public function update(ModuleRequest $request, Module $module)
     {
-        //
+        $this->moduleUpdateService->updateModule($module, $request->validated());
+
+        return redirect()->route('modules.show', $module)
+            ->with('succes', 'Module succesvol geüpdate!');
     }
 
     /**
@@ -102,6 +118,9 @@ class ModuleController extends Controller
      */
     public function destroy(Module $module)
     {
-        //
+        $module->delete();
+
+        return redirect()->route('modules.index')
+            ->with('succes', 'Module succesvol verwijderd!');;
     }
 }

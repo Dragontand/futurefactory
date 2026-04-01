@@ -20,16 +20,16 @@ class ModuleRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules() : array
     {
         $baseRules = [
             'name'  => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'time'  => 'required|integer|min:1',
-            'image' => 'required|string',
+            'image' => 'nullable|string',
         ];
 
-        return match(session('module_type')) {
+        return match($this->resolveType()) {
             'chassis' => array_merge($baseRules, [
                 'vehicle_type'  => 'required|string',
                 'amount_wheels' => 'required|integer|min:1',
@@ -54,6 +54,26 @@ class ModuleRequest extends FormRequest
                 'amount' => 'required|integer|min:1',
             ]),
             default => $baseRules
+        };
+    }
+
+    // searched for right type
+    private function resolveType()
+    {
+        if (session('module_type')) {
+            return session('module_type');
+        }
+
+        $module = $this->route('module');
+        if (!$module) return null;
+
+        return match(true) {
+            $module->chassis !== null       => 'chassis',
+            $module->propulsion !== null    => 'propulsion',
+            $module->wheel !== null         => 'wheel',
+            $module->steeringWheel !== null => 'steering_wheel',
+            $module->chair !== null         => 'chair',
+            default                         => null,
         };
     }
 }

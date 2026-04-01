@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Module;
+use App\Observers\ModuleObserver;
 use Faker\Generator;
 use Faker\Provider\FakeCar;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Module::observe(ModuleObserver::class);
     }
 }

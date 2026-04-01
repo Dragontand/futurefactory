@@ -6,22 +6,23 @@ use App\Models\Module;
 
 class ModuleObserver
 {
-    public function created(Module $module) : void
+    public function deleting(Module $module) : void
     {
-        $subtTypCount = (int) $module->chassis()->exists()  
-            + (int) $module->propulsion()->exists()  
-            + (int) $module->wheel()->exists() 
-            + (int)$module->steeringWheel()->exists()
-            + (int)$module->chair()->exists();
-        // To make sure the Module model is abstract wihtout initiating it as abstract.
-        if ($subtTypCount === 0)   {
-            $module->delete();
-            throw new \LogicException('A module cannot exist without a subtype.');
-        }
-        // And to enforce that one Module is one subtype.
-        if ($subtTypCount > 1)   {
-            $module->delete();
-            throw new \LogicException('A module cannot have more than one subtype.');
-        }
+        // Gets called just before $module->delete() is executed
+        $module->chassis?->delete();
+        $module->propulsion?->delete();
+        $module->wheel?->delete();
+        $module->steeringWheel?->delete();
+        $module->chair?->delete();
+    }
+
+    public function restoring(Module $module) : void
+    {
+        // Gets called just before $module->retore() is executed
+        $module->chassis()->withTrashed()->first()?->restore();
+        $module->propulsion()->withTrashed()->first()?->restore();
+        $module->wheel()->withTrashed()->first()?->restore();
+        $module->steeringWheel()->withTrashed()->first()?->restore();
+        $module->chair()->withTrashed()->first()?->restore();
     }
 }

@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->foreignId('chassis_module_id')->constrained('chassis', 'module_id');
+            $table->foreignId('propulsion_module_id')->constrained('propulsions', 'module_id');
+            $table->foreignId('wheel_module_id')->constrained('wheels', 'module_id');
+            $table->foreignId('steering_wheel_module_id')->constrained('steering_wheels', 'module_id');
+            $table->foreignId('chair_module_id')->constrained('chairs', 'module_id');
             $table->timestamps();
         });
     }

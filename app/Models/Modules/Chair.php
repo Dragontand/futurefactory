@@ -7,11 +7,13 @@ use App\Models\Module;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Chair extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\ChairFactory> */
     use HasFactory;
+    use SoftDeletes;
     // Module model already has a timestamp
     public $timestamps = false;
     // Assign the PK from Module to subclass

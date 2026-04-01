@@ -15,11 +15,11 @@ class ModuleCreationService
     {
         // Make basis Module
         $module = Module::create([
-            'type' => $moduleType,
             'name' => $data['name'],
             'price' => $data['price'],
             'time' => $data['time'],
-            'image' => $data['image'],
+            // Image has a placeholder for now
+            'image' => 'https://placehold.co/600x400/000000/FFFFFF.png',
         ]);
         
         // Send to create switcher

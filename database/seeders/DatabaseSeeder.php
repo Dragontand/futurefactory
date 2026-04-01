@@ -25,6 +25,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'Admin'
         ]);
         $this->call(ModuleSeeder::class);
-        //$this->call(VehicleSeeder::class);
+        $this->call(VehicleSeeder::class);
     }
 }

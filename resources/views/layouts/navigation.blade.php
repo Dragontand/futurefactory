@@ -16,8 +16,8 @@
                         Dashboard
                     </x-nav-link>
 
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('assemblage.*')">
-                        Assemblage
+                    <x-nav-link :href="route('vehicles.index')" :active="request()->routeIs('vehicles.*')">
+                        Vehicles
                     </x-nav-link>
 
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('planning.*')">

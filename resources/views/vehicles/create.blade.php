@@ -1,51 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <x-header-title>
-            @if (!session('module_type'))
-                Create Module
-            @else
-                {{ ucfirst(session('module_type')) }}
-            @endif
+            Assemble vehicle
         </x-header-title>
     </x-slot>
 
-    <!-- Module type -->
-    @if (!session('module_type'))
-        <form method="POST" action="{{ route('modules.storeType') }}">
-            @csrf
-
-            <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-                <x-input-label :value="__('Type module')" />
-                <div class="flex gap-3 col-span-full">
-                    @foreach ($modules as $value => $label)
-                    <label for="{{ $value }}"
-                        class="flex items-center pl-4 pr-6 py-3 border border-gray-600 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
-
-                        <input type="radio" @if ($loop->first) { {{ "checked" }} } @endif name="type" id="{{ $value }}" value="{{ $value }}"
-                            class="w-4 h-4 text-blue-600 bg-gray-900 border-gray-500 rounded-full focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer">
-
-                        <span class="ml-3 text-sm font-medium text-gray-200 select-none">
-                            {{ $label }}
-                        </span>
-
-                    </label>
-                    @endforeach
-                </div>
-            </div>
-            <div class="flex items-center justify-end mt-4">
-                <x-secondary-button href="{{ route('modules.cancel') }}">
-                    Cancel
-                </x-secondary-button>
-
-                <x-primary-button class="ms-4">
-                    Next
-                </x-primary-button>
-            </div>
-        </form>
-    @endif
-
+    <!-- Create form -->
     @if(session('module_type'))
-        <form method="POST" action="{{ route('modules.store') }}">
+        <form method="POST" action="{{ route('vehicles.store') }}">
             @csrf
 
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
