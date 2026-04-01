@@ -5,7 +5,6 @@ use App\Enums\SteeringWheelType;
 use App\Enums\UpholsteryType;
 use App\Enums\VehicleType;
 use App\Enums\WheelType;
-use App\Models\Module;
 use App\Models\Modules\Chassis;
 use App\Models\Modules\Wheel;
 use Illuminate\Database\Migrations\Migration;

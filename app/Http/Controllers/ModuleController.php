@@ -3,11 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Module;
-use App\Http\Requests\StoreModuleRequest;
+use App\Http\Requests\ModuleRequest;
 use App\Http\Requests\UpdateModuleRequest;
+use App\Services\ModuleCreationService;
+
 
 class ModuleController extends Controller
 {
+    private ModuleCreationService $moduleService;
+
+    public function __construct(ModuleCreationService $moduleService)
+    {
+        $this->moduleService = $moduleService;
+    }
+
     private $modules = [
         'chassis'         => 'Chassis', 
         'propulsion'      => 'Propulsion', 
@@ -20,8 +29,10 @@ class ModuleController extends Controller
      */
     public function index()
     {
-        // Get modules, pagianate and give with view
-        return view('modules.index');
+        $modules = Module::with(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair'])->simplePaginate(15);
+        return view('modules.index', [
+            'modules' => $modules
+        ]);
     }
 
     /**
@@ -39,7 +50,7 @@ class ModuleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function storeType(StoreModuleRequest $request)
+    public function storeType(ModuleRequest $request)
     {
         $request->validate([
             'type' => 'required|in:' . implode(",", array_keys($this->modules))
@@ -52,9 +63,14 @@ class ModuleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreModuleRequest $request)
+    public function store(ModuleRequest $request)
     {
-        //
+        $this->moduleService->createModule(session('module_type'), $request->validated());
+
+        session()->forget('module_type');
+
+        return redirect()->route('modules.index')
+            ->with('succes', 'Module succesvol aangemaakt!');;
     }
 
     /**
@@ -62,7 +78,7 @@ class ModuleController extends Controller
      */
     public function show(Module $module)
     {
-        //
+        return view('modules.show', ['module' => $module]);
     }
 
     /**
@@ -70,13 +86,13 @@ class ModuleController extends Controller
      */
     public function edit(Module $module)
     {
-        //
+        return view('modules.edit', ['module' => $module]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateModuleRequest $request, Module $module)
+    public function update(ModuleRequest $request, Module $module)
     {
         //
     }

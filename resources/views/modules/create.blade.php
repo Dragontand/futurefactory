@@ -173,7 +173,7 @@
                     <!-- Special request -->
                     <div class="sm:col-span-3">
                         <x-input-label for="special_request" :value="__('Special request')" />
-                        <x-text-input id="special_request" class="block mt-1 w-full" type="text" name="special_request" min="0" :value="old('special_request')" required/>
+                        <x-text-input id="special_request" class="block mt-1 w-full" type="text" name="special_request" min="0" :value="old('special_request')" />
                         <x-input-error :messages="$errors->get('special_request')" class="mt-2" />
                     </div>
                 @endif

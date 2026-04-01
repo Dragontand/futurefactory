@@ -18,6 +18,18 @@ class Module extends Model
 
     protected $guarded = [];
 
+    public function getTypeLabel(): string
+    {
+        return match(true) {
+            $this->chassis()->exists()       => 'Chassis',
+            $this->propulsion()->exists()    => 'Propulsion',
+            $this->wheel()->exists()         => 'Wheel',
+            $this->steeringWheel()->exists() => 'Steering Wheel',
+            $this->chair()->exists()         => 'Chair',
+            default                          => 'Unknown',
+        };
+    }
+
     public function chassis(): HasOne
     {
         return $this->hasOne(Chassis::class, 'module_id');
