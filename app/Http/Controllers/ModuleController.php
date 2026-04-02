@@ -32,7 +32,12 @@ class ModuleController extends Controller
      */
     public function index()
     {
+        if (session('module_type')) {
+            session()->forget('module_type');
+        }
+
         $modules = Module::with(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair'])->latest()->simplePaginate(15);
+        
         return view('modules.index', [
             'modules' => $modules
         ]);
@@ -52,7 +57,7 @@ class ModuleController extends Controller
     public function cancel()
     {
         session()->forget('module_type');
-        return redirect()->route('modules.index');
+        return redirect()->route('modules.create');
     }
 
     /**
@@ -79,7 +84,7 @@ class ModuleController extends Controller
         session()->forget('module_type');
 
         return redirect()->route('modules.index')
-            ->with('succes', 'Module succesvol aangemaakt!');;
+            ->with('success', 'Module successfully created!');;
     }
 
     /**
@@ -110,7 +115,7 @@ class ModuleController extends Controller
         $this->moduleUpdateService->updateModule($module, $request->validated());
 
         return redirect()->route('modules.show', $module)
-            ->with('succes', 'Module succesvol geüpdate!');
+            ->with('succes', 'Module successfully edited!');
     }
 
     /**
@@ -121,6 +126,6 @@ class ModuleController extends Controller
         $module->delete();
 
         return redirect()->route('modules.index')
-            ->with('succes', 'Module succesvol verwijderd!');;
+            ->with('success', 'Module successfully deleted!');;
     }
 }

@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'John Jacobs',
-            'email' => 'johnjacobs@example.om',
+            'email' => 'johnjacobs@example.com',
             'password' => 'Test1234',
-            'role' => 'Admin'
+            'role' => 'admin'
         ]);
         $this->call(ModuleSeeder::class);
         $this->call(VehicleSeeder::class);

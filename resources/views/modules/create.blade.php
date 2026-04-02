@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="flex items-center justify-end mt-4">
-                <x-secondary-button href="{{ route('modules.cancel') }}">
+                <x-secondary-button href="{{ route('modules.index') }}">
                     Cancel
                 </x-secondary-button>
 
@@ -42,9 +42,7 @@
                 </x-primary-button>
             </div>
         </form>
-    @endif
-
-    @if(session('module_type'))
+    @else
         <form method="POST" action="{{ route('modules.store') }}">
             @csrf
 
@@ -203,8 +201,14 @@
             </div>
             <div class="flex items-center justify-end mt-4">
                 <x-secondary-button href="{{ route('modules.cancel') }}">
-                    Cancel
+                    Back
                 </x-secondary-button>
+
+                @if (session('module_type'))
+                    <x-secondary-button class="ms-4" href="{{ route('modules.index') }}">
+                        Cancel
+                    </x-secondary-button>
+                @endif
 
                 <x-primary-button class="ms-4">
                     Save

@@ -23,12 +23,12 @@ class Module extends Model
     public function getTypeLabel(): string
     {
         return match(true) {
-            $this->chassis()->exists()       => 'Chassis',
-            $this->propulsion()->exists()    => 'Propulsion',
-            $this->wheel()->exists()         => 'Wheel',
-            $this->steeringWheel()->exists() => 'Steering Wheel',
-            $this->chair()->exists()         => 'Chair',
-            default                          => 'Unknown',
+            $this->chassis !== null         => 'Chassis',
+            $this->propulsion !== null      => 'Propulsion',
+            $this->wheel !== null           => 'Wheel',
+            $this->steeringWheel !== null   => 'Steering Wheel',
+            $this->chair !== null           => 'Chair',
+            default                         => 'Unknown',
         };
     }
 

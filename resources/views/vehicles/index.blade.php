@@ -15,7 +15,7 @@
                 <div class="flex justify-between">
                     <div class="flex flex-col">
                         <div>
-                            <x-span-tag :value="__('Chasssis:')" />
+                            <x-span-tag :value="__('Chassis:')" />
                             {{ $vehicle->chassis->module->name }}
                         </div>
                         <div>
@@ -33,6 +33,10 @@
                         <div>
                             <x-span-tag :value="__('Chair:')" />
                             {{ $vehicle->chair->module->name }}
+                        </div>
+                        <div>
+                            <x-span-tag class="text-emerald-400" :value="__('Total:')" />
+                            ${{ $vehicle->calcTotal() }}
                         </div>
                     </div>
                 </div>

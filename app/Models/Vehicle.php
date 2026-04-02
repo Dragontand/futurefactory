@@ -16,6 +16,8 @@ class Vehicle extends Model
     /** @use HasFactory<\Database\Factories\VehicleFactory> */
     use HasFactory;
 
+    protected $guarded = [];
+
     public function chassis(): BelongsTo 
     {
         return $this->belongsTo(Chassis::class, 'chassis_module_id', 'module_id');
@@ -48,7 +50,13 @@ class Vehicle extends Model
     }
 
     // To calculate the total of a vehicle
-    public function calTotal() {
-        //
+    public function calcTotal() {
+        return (
+            $this->chassis->module->price +
+            $this->propulsion->module->price +
+            $this->wheel->module->price +
+            $this->steeringWheel->module->price +
+            $this->chair->module->price
+        );
     }
 }

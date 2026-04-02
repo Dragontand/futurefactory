@@ -7,6 +7,7 @@ use App\Models\Module;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Chassis extends Model
@@ -24,6 +25,21 @@ class Chassis extends Model
     protected $casts = [
         'type' => VehicleType::class
     ];
+
+    // To get, attach and or detach compatible wheels. Examples:
+    // Get: $chassis->compatibleChassis;
+    // Attach/Detach: $chassis->compatibleChassis()->attach/detach($wheel);
+    public function compatibleWheels() : BelongsToMany
+    {
+        return $this->belongsToMany(
+            Wheel::class,
+            'chassis_wheel',
+            'chassis_module_id',
+            'wheel_module_id',
+            'module_id',
+            'module_id',
+        );
+    }
 
     public function module(): BelongsTo
     {

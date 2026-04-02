@@ -82,10 +82,9 @@
                             </div>
                         @endif
                         <div>
-                            <a href="{{ route('modules.show', $chassis->module_id) }}"
-                            class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 hover:underline">
+                            <x-inline-link href="{{ route('modules.show', $chassis->module_id) }}">
                                 - {{ $chassis->module->name }}
-                            </a>
+                            </x-inline-link>
                         </div>
                     @endforeach
                 </div>

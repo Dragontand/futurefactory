@@ -14,9 +14,10 @@ class RoleMiddleware
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    // ... splat-operator for parsing the given roles
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!$request->user() || !in_array($request->user()->role, array_column(UserRole::cases(), 'value'))) {
+        if (!$request->user() || !in_array($request->user()->role, $roles)) {
             abort(403);
         }
 

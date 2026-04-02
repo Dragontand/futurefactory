@@ -20,8 +20,8 @@
                         Vehicles
                     </x-nav-link>
 
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('planning.*')">
-                        Planning
+                    <x-nav-link :href="route('schedules.index')" :active="request()->routeIs('schedules.*')">
+                        Schedule
                     </x-nav-link>
 
                     <x-nav-link :href="route('modules.index')" :active="request()->routeIs('modules.*')">

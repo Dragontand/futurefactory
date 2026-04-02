@@ -3,27 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vehicle;
-use App\Http\Requests\StoreVehicleRequest;
-use App\Http\Requests\UpdateVehicleRequest;
-use App\Models\Module;
+use App\Http\Requests\VehicleRequest;
 use App\Models\Modules\Chair;
 use App\Models\Modules\Chassis;
 use App\Models\Modules\Propulsion;
 use App\Models\Modules\SteeringWheel;
 use App\Models\Modules\Wheel;
+use App\Services\VehicleCreationService;
+use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
+    private VehicleCreationService $vehicleCreationService;
+
+    public function __construct(VehicleCreationService $vehicleCreationService)
+    {
+        $this->vehicleCreationService = $vehicleCreationService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $vehicles = Vehicle::with(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair'])->latest()->simplePaginate(15);
+        $vehicles = Vehicle::with([
+            'chassis.module',
+            'propulsion.module',
+            'wheel.module',
+            'steeringWheel.module',
+            'chair.module'
+        ])->latest()->simplePaginate(15);
+
         return view('vehicles.index', [
             'vehicles' => $vehicles
         ]);
-        
     }
 
     /**
@@ -32,20 +44,42 @@ class VehicleController extends Controller
     public function create()
     {
         return view('vehicles.create', [
-            'chassisModules'      => Chassis::with('module')->get(),
-            'propulsionModules'   => Propulsion::with('module')->get(),
-            'wheelModules'        => Wheel::with('module')->get(),
-            'steeringWheelModules'=> SteeringWheel::with('module')->get(),
-            'chairModules'        => Chair::with('module')->get(),
+            'chassisModules' => Chassis::with('module')->get(),
+            // These are empty because they will be given in the next request
+            'propulsionModules'    => collect(),
+            'wheelModules'         => collect(),
+            'steeringWheelModules' => collect(),
+            'chairModules'         => collect(),
         ]);
     }
 
     /**
+     * Show the form for creating a new resource.
+     */
+    public function createStep2(Request $request)
+{
+    $selectedChassis = Chassis::findOrFail($request->chassis_module_id);
+    return view('vehicles.create', [
+        'selectedChassis'       => $selectedChassis,
+        'name'                  => $request->name,
+        // This is empty because it was given in the previous request
+        'chassisModules'        => collect(),
+        'propulsionModules'     => Propulsion::with('module')->get(),
+        'wheelModules'          => $selectedChassis->compatibleWheels,
+        'steeringWheelModules'  => SteeringWheel::with('module')->get(),
+        'chairModules'          => Chair::with('module')->get(),
+    ]);
+}
+
+    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreVehicleRequest $request)
+    public function store(VehicleRequest $request)
     {
-        //
+        $this->vehicleCreationService->createVehicle($request->validated());
+
+        return redirect()->route('vehicles.index')
+            ->with('success', 'Vehicle successfully created!');;
     }
 
     /**
@@ -53,8 +87,19 @@ class VehicleController extends Controller
      */
     public function show(Vehicle $vehicle)
     {
+        $vehicle->load(['chassis.module', 'propulsion.module', 'wheel.module', 'steeringWheel.module', 'chair.module']);
+
+        $assemblyOrder = collect([
+            ['label' => '1. Chassis',        'moduleType' => $vehicle->chassis->module],
+            ['label' => '2. Propulsion',     'moduleType' => $vehicle->propulsion->module],
+            ['label' => '3. Wheels',         'moduleType' => $vehicle->wheel->module],
+            ['label' => '4. Steering wheel', 'moduleType' => $vehicle->steeringWheel->module],
+            ['label' => '5. Chair',          'moduleType' => $vehicle->chair->module],
+        ]);
+
         return view('vehicles.show', [
-            'vehicle' => $vehicle
+            'vehicle' => $vehicle,
+            'assemblyOrder' => $assemblyOrder,
         ]);
     }
 
@@ -66,6 +111,6 @@ class VehicleController extends Controller
         $vehicle->delete();
 
         return redirect()->route('vehicles.index')
-            ->with('succes', 'Vehicle succesvol verwijderd!');;
+            ->with('success', 'Vehicle successfully deleted!');;
     }
 }

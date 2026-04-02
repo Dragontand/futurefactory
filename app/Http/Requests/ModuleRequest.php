@@ -2,8 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\PropulsionType;
+use App\Enums\SteeringWheelType;
+use App\Enums\UpholsteryType;
+use App\Enums\VehicleType;
+use App\Enums\WheelType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ModuleRequest extends FormRequest
 {
@@ -23,35 +29,35 @@ class ModuleRequest extends FormRequest
     public function rules() : array
     {
         $baseRules = [
-            'name'  => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'time'  => 'required|integer|min:1',
-            'image' => 'nullable|string',
+            'name'  => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric', 'min:1'],
+            'time'  => ['required', 'integer', 'min:1'],
+            'image' => ['nullable', 'string'],
         ];
 
         return match($this->resolveType()) {
             'chassis' => array_merge($baseRules, [
-                'vehicle_type'  => 'required|string',
-                'amount_wheels' => 'required|integer|min:1',
-                'length'        => 'required|integer|min:1',
-                'width'         => 'required|integer|min:1',
-                'height'        => 'required|integer|min:1',
+                'vehicle_type'          => ['required', 'string', Rule::in(VehicleType::cases())],
+                'amount_wheels'         => ['required', 'integer', 'min:1'],
+                'length'                => ['required', 'integer', 'min:1'],
+                'width'                 => ['required', 'integer', 'min:1'],
+                'height'                => ['required', 'integer', 'min:1'],
             ]),
             'propulsion' => array_merge($baseRules, [
-                'propulsion_type' => 'required|string',
-                'horsepower'      => 'required|integer|min:1',
+                'propulsion_type'       => ['required', 'string', Rule::in(PropulsionType::cases())],
+                'horsepower'            => ['required', 'integer', 'min:1'],
             ]),
             'wheel' => array_merge($baseRules, [
-                'wheel_type' => 'required|string',
-                'diameter' => 'required|integer|min:1',
+                'wheel_type'            => ['required', 'string', Rule::in(WheelType::cases())],
+                'diameter'              => ['required', 'integer', 'min:1'],
             ]),
             'steering_wheel' => array_merge($baseRules, [
-                'steering_wheel_type' => 'required|string',
-                'special_request' => 'nullable|string|min:0',
+                'steering_wheel_type'   => ['required', 'string', Rule::in(SteeringWheelType::cases())],
+                'special_request'       => 'nullable|string|min:0',
             ]),
             'chair' => array_merge($baseRules, [
-                'upholstery_type' => 'required|string',
-                'amount' => 'required|integer|min:1',
+                'upholstery_type'       => ['required', 'string', Rule::in(UpholsteryType::cases())],
+                'amount'                => ['required', 'integer', 'min:1'],
             ]),
             default => $baseRules
         };
