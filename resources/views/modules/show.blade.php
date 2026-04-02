@@ -10,7 +10,9 @@
     </x-slot>
     
     <div class="space-y-4">
-        <div class="font-bold text-blue-500 text-xl">{{ ucfirst($module->name) }}</div>
+        <div class="font-bold text-blue-500 text-xl">
+            {{ ucfirst($module->name) }}
+        </div>
         <div class="flex justify-between">
             <div class="flex flex-col">
                 <div>

@@ -57,7 +57,7 @@ class ModuleRequest extends FormRequest
         };
     }
 
-    // searched for right type
+    // Searches for right type
     private function resolveType()
     {
         if (session('module_type')) {
