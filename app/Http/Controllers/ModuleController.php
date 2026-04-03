@@ -38,9 +38,7 @@ class ModuleController extends Controller
 
         $modules = Module::with(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair'])->latest()->simplePaginate(15);
         
-        return view('modules.index', [
-            'modules' => $modules
-        ]);
+        return view('modules.index', compact('modules'));
     }
 
     /**
@@ -93,7 +91,7 @@ class ModuleController extends Controller
     public function show(Module $module)
     {
         $module->load(['wheel.compatibleChassis.module']);
-        return view('modules.show', ['module' => $module]);
+        return view('modules.show', compact('module'));
     }
 
     /**

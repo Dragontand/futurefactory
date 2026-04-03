@@ -36,18 +36,19 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:admin,mechanic')->group(function () {
-        Route::controller(VehicleController::class)->group(function () {
-            Route::post('vehicles/create-step2', 'createStep2')
-                ->name('vehicles.create-step2');
+        Route::post('vehicles/create-step2', [VehicleController::class, 'createStep2'])
+            ->name('vehicles.create-step2');
 
-            Route::resource('vehicles', VehicleController::class)
-                ->only(['index', 'create', 'store', 'show', 'destroy']);;
-        });
+        Route::resource('vehicles', VehicleController::class)
+            ->except(['edit', 'update']);;
     });
 
     Route::middleware('role:admin,schedular')->group(function () {
+        Route::get('schedules/day/{date}', [ScheduleController::class, 'show'])
+            ->name('schedules.show');
+
         Route::resource('schedules', ScheduleController::class)
-            ->only(['index', 'create', 'store', 'destroy']);;
+            ->except(['edit', 'update', 'show']);;
     });
 });
 

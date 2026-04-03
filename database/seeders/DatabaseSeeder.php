@@ -26,5 +26,6 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->call(ModuleSeeder::class);
         $this->call(VehicleSeeder::class);
+        $this->call(RobotSeeder::class);
     }
 }

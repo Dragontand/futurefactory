@@ -10,6 +10,7 @@ use App\Models\Modules\Wheel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Vehicle extends Model
 {
@@ -41,6 +42,11 @@ class Vehicle extends Model
     public function chair() : BelongsTo
     {
         return $this->belongsTo(Chair::class, 'chair_module_id', 'module_id');
+    }
+
+    public function schedules() : HasMany
+    {
+        return $this->hasMany(Schedule::class);
     }
 
     // Check compatible chassis

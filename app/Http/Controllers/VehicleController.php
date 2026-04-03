@@ -33,9 +33,7 @@ class VehicleController extends Controller
             'chair.module'
         ])->latest()->simplePaginate(15);
 
-        return view('vehicles.index', [
-            'vehicles' => $vehicles
-        ]);
+        return view('vehicles.index', compact('vehicles'));
     }
 
     /**
@@ -43,8 +41,10 @@ class VehicleController extends Controller
      */
     public function create()
     {
+        $chassisModules = Chassis::with('module')->get();
+        
         return view('vehicles.create', [
-            'chassisModules' => Chassis::with('module')->get(),
+            'chassisModules' => $chassisModules,
             // These are empty because they will be given in the next request
             'propulsionModules'    => collect(),
             'wheelModules'         => collect(),
@@ -57,19 +57,19 @@ class VehicleController extends Controller
      * Show the form for creating a new resource.
      */
     public function createStep2(Request $request)
-{
-    $selectedChassis = Chassis::findOrFail($request->chassis_module_id);
-    return view('vehicles.create', [
-        'selectedChassis'       => $selectedChassis,
-        'name'                  => $request->name,
-        // This is empty because it was given in the previous request
-        'chassisModules'        => collect(),
-        'propulsionModules'     => Propulsion::with('module')->get(),
-        'wheelModules'          => $selectedChassis->compatibleWheels,
-        'steeringWheelModules'  => SteeringWheel::with('module')->get(),
-        'chairModules'          => Chair::with('module')->get(),
-    ]);
-}
+    {
+        $selectedChassis = Chassis::findOrFail($request->chassis_module_id);
+        return view('vehicles.create', [
+            'selectedChassis'       => $selectedChassis,
+            'name'                  => $request->name,
+            // This is empty because it was given in the previous request
+            'chassisModules'        => collect(),
+            'propulsionModules'     => Propulsion::with('module')->get(),
+            'wheelModules'          => $selectedChassis->compatibleWheels,
+            'steeringWheelModules'  => SteeringWheel::with('module')->get(),
+            'chairModules'          => Chair::with('module')->get(),
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -97,10 +97,7 @@ class VehicleController extends Controller
             ['label' => '5. Chair',          'moduleType' => $vehicle->chair->module],
         ]);
 
-        return view('vehicles.show', [
-            'vehicle' => $vehicle,
-            'assemblyOrder' => $assemblyOrder,
-        ]);
+        return view('vehicles.show', compact('vehicle', 'assemblyOrder'));
     }
 
     /**
