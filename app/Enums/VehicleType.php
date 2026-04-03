@@ -5,7 +5,7 @@ namespace App\Enums;
 enum VehicleType : string
 {
     case Step   = 'step';
-    case Bike   = 'bike';
+    case Bicycle   = 'bicycle';
     case Scooter = 'scooter';
     case PassengerCar   = 'passenger_car';
     case Truck   = 'truck';

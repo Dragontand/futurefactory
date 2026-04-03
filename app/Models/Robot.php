@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Robot extends Model
 {
-    public function robot(): HasOne
+    public function schedules(): HasMany
     {
-        return $this->hasOne(Schedule::class);
+        return $this->hasMany(Schedule::class);
     }
 }

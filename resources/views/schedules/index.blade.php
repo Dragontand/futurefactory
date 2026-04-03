@@ -76,5 +76,43 @@
                 </div>
             </div>
         </div>
+
+        {{-- Vehicle overview --}}
+        <div class="w-full max-w-7xl mx-auto px-4 lg:px-8 xl:px-14 mt-8">
+            <h5 class="text-xl leading-8 font-semibold text-white mb-4">
+                Vehicle Overview
+            </h5>
+
+            <div class="border border-gray-400 rounded-lg overflow-hidden">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-white font-bold border-b border-gray-400">
+                        <tr>
+                            <th class="px-4 py-3">Vehicle</th>
+                            <th class="px-4 py-3">Progress</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Expected Completion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($vehicles as $vehicle)
+                            <tr class="border-b border-gray-600">
+                                <td class="px-4 py-3 text-gray-200">{{ $vehicle['name'] }}</td>
+                                <td class="px-4 py-3 text-gray-300">{{ $vehicle['completedSlots'] }} / {{ $vehicle['totalSlots'] }} slots</td>
+                                <td class="px-4 py-3">
+                                    @if ($vehicle['isComplete'])
+                                        <span class="text-green-400">Complete</span>
+                                    @elseif ($vehicle['isScheduled'])
+                                        <span class="text-yellow-400">In production</span>
+                                    @else
+                                        <span class="text-gray-400">Not scheduled</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-gray-300">{{ $vehicle['expectedDate'] ?? '—' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </section>
 </x-app-layout>

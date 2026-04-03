@@ -5,25 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Schedule;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Services\ScheduleCalendarService;
+use App\Services\ScheduleCreateService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
-    private ScheduleCalendarService $scheduleCalendarService;
+    private ScheduleCalendarService $calendarService;
+    private ScheduleCreateService $createService;
 
-    public function __construct(ScheduleCalendarService $scheduleCalendarService)
+    public function __construct(ScheduleCalendarService $calendarService, ScheduleCreateService $createService)
     {
-        $this->scheduleCalendarService = $scheduleCalendarService;
+        $this->calendarService = $calendarService;
+        $this->createService = $createService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $curDate = $request->has('month') ? 
-            CarbonImmutable::parse($request->month) : 
+        $curDate = $request->has('month') ?
+            CarbonImmutable::parse($request->month) :
             CarbonImmutable::now();
 
         $now = CarbonImmutable::now();
@@ -36,46 +36,49 @@ class ScheduleController extends Controller
         ];
 
         $days = ScheduleCalendarService::buildDays($curDate->year, $curDate->month);
-        
+        $vehicles = $this->calendarService->getVehicleOverview();
+
         return view('schedules.index',
-            compact('months', 'days'));
+            compact('months', 'days', 'vehicles'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('schedules.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreScheduleRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(StoreScheduleRequest $request)
+    public function show(Request $request)
     {
         $date = $request->date;
-        $slots = $this->scheduleCalendarService->getAvailableSlots($date);
+        $slots = $this->calendarService->getAvailableSlots($date);
 
-        return view('schedules.show', compact('$slots'));
+        return view('schedules.show', compact('date', 'slots'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function create(Request $request)
+    {
+        $day = $request->day;
+        $slot = $request->slot;
+        $robots = $this->createService->getAvailableRobots($day, $slot);
+        $vehicles = $this->createService->getSchedulableVehicles();
+
+        return view('schedules.create', compact('day', 'slot', 'robots', 'vehicles'));
+    }
+
+    public function store(StoreScheduleRequest $request)
+    {
+        $data = $request->validated();
+
+        if ($data['type'] === 'maintenance') {
+            $this->createService->storeMaintenance($data);
+        } else {
+            $this->createService->storeAssembly($data);
+        }
+
+        return redirect()->route('schedules.show', ['date' => $data['day']])
+            ->with('success', 'Schedule successfully created!');;
+    }
+
     public function destroy(Schedule $schedule)
     {
         $schedule->delete();
 
         return redirect()->route('schedules.index')
-            ->with('success', 'Vehicle successfully deleted!');;
+            ->with('success', 'Schedule successfully deleted!');
     }
 }

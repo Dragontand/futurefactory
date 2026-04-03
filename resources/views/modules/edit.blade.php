@@ -38,7 +38,7 @@
                     <x-input-label for="vehicle_type" :value="__('Vehicle type')" />
                     <x-select-input id="vehicle_type" class="block mt-1 w-full" name="vehicle_type" required>
                         <option value="step" @selected(old('vehicle_type', $module->chassis->type->value) === 'step')>Step</option>
-                        <option value="bike" @selected(old('vehicle_type', $module->chassis->type->value) === 'bike')>Bike</option>
+                        <option value="bicycle" @selected(old('vehicle_type', $module->chassis->type->value) === 'bicycle')>Bicycle</option>
                         <option value="scooter" @selected(old('vehicle_type', $module->chassis->type->value) === 'scooter')>Scooter</option>
                         <option value="passenger_car" @selected(old('vehicle_type', $module->chassis->type->value) === 'passenger_car')>Passenger Car</option>
                         <option value="truck" @selected(old('vehicle_type', $module->chassis->type->value) === 'truck')>Truck</option>

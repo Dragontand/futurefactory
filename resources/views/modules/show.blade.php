@@ -4,9 +4,15 @@
             {{ $module->getTypeLabel() }} Module
         </x-header-title>
 
-        <x-secondary-button href="{{ route('modules.create') }}" class="flex-end">
-            Create
-        </x-secondary-button>
+        <div>
+            <x-secondary-button class="flex-end" href="{{ route('modules.create') }}">
+                Create
+            </x-secondary-button>
+
+            <x-secondary-button class="ms-4" href="{{ route('modules.index') }}">
+                Back
+            </x-secondary-button>
+        </div>
     </x-slot>
     
     <div class="space-y-4">

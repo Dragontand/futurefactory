@@ -3,35 +3,16 @@
 namespace App\Services;
 
 use App\Models\Schedule;
+use App\Models\Vehicle;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 
 class ScheduleCalendarService
 {
-    public static function buildMonth(int $year, int $month) : array
-    {
-        $startOfMonth = CarbonImmutable::create($year, $month, 1);
-        $endOfMonth = $startOfMonth->endOfMonth();
-        $startOfWeek = $startOfMonth->startOfWeek(); 
-        $endOfWeek = $endOfMonth->endOfWeek();
-
-        return [
-            'year'  => $startOfMonth->year,
-            'month' => $startOfMonth->format('F'),
-            'weeks' => collect($startOfWeek->toPeriod($endOfWeek)->toArray()) 
-                ->map(fn ($date) => [
-                    'path' => $date->format('/Y/m/d'),
-                    'day' => $date->day,
-                ])
-                ->chunk(5),
-        ];
-    }
-
     public static function buildDays(int $year, int $month): array
     {
         // CarbonImmutable::create() makes a date-object fro the year, month and day
         $startOfMonth = CarbonImmutable::create($year, $month, 1);
-        $endOfMonth = $startOfMonth->endOfMonth();
 
         // This is for the "paddings" days that go into
         // last and next month in the calendar view.
@@ -62,15 +43,71 @@ class ScheduleCalendarService
             ->toArray();
     }
 
-    public function getAvailableSlots(string $date) : array
-    {
-        $bookedSlots = Schedule::where('day', $date)
-            ->pluck('slot')
-            ->toArray();
+    private const SLOT_LABELS = [
+        1 => '09:00 - 11:00',
+        2 => '11:00 - 13:00',
+        3 => '13:00 - 15:00',
+        4 => '15:00 - 17:00',
+    ];
 
-        return collect(range(1, 4))->map(fn ($slot) => [
-            'slot' => $slot,
-            'available' => !in_array($slot, $bookedSlots),
-        ])->toArray();
+    public function getAvailableSlots(string $date): array
+    {
+        $schedules = Schedule::with(['robot', 'vehicle'])
+            ->where('day', $date)
+            ->get()
+            // Make array key the slot number
+            ->keyBy('slot');
+
+        $slots = [];
+        foreach (range(1, 4) as $slotNumber) {
+            $schedule = $schedules->get($slotNumber);
+            $slots[] = [
+                'number'      => $slotNumber,
+                'label'     => self::SLOT_LABELS[$slotNumber],
+                'isAvailable' => $schedule === null,
+                'schedule'  => $schedule ? [
+                    'id'          => $schedule->id,
+                    'type'        => $schedule->type->value,
+                    'robot'       => $schedule->robot->name,
+                    'vehicle'     => $schedule->vehicle?->name,
+                    'is_complete' => $schedule->is_complete,
+                ] : null,
+            ];
+        }
+        return $slots;
+    }
+
+    public function getVehicleOverview(): array
+    {
+        $vehicles = Vehicle::with([
+            'chassis.module',
+            'propulsion.module',
+            'wheel.module',
+            'steeringWheel.module',
+            'chair.module',
+            'schedules'
+        ])->get();
+
+        $overview = [];
+        foreach ($vehicles as $vehicle) {
+            $totalTime = $vehicle->calcTotalTime();
+
+            $assemblySchedules = $vehicle->schedules->where('type.value', 'assembly');
+            $completedSlots = $assemblySchedules->where('is_complete', true)->count();
+            $scheduledSlots = $assemblySchedules->count();
+            $lastDay = $assemblySchedules->max('day');
+
+            $overview[] = [
+                'name'           => $vehicle->name,
+                'totalSlots'     => $totalTime,
+                'scheduledSlots' => $scheduledSlots,
+                'completedSlots' => $completedSlots,
+                'expectedDate'   => $lastDay?->format('d M Y'),
+                'isScheduled'    => $scheduledSlots > 0,
+                'isComplete'     => $completedSlots >= $totalTime,
+            ];
+        }
+
+        return $overview;
     }
 }

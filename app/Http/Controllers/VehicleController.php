@@ -14,17 +14,18 @@ use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
-    private VehicleCreationService $vehicleCreationService;
+    private VehicleCreationService $creationService;
 
-    public function __construct(VehicleCreationService $vehicleCreationService)
+    public function __construct(VehicleCreationService $creationService)
     {
-        $this->vehicleCreationService = $vehicleCreationService;
+        $this->creationService = $creationService;
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        // Nested eager loading
         $vehicles = Vehicle::with([
             'chassis.module',
             'propulsion.module',
@@ -76,7 +77,7 @@ class VehicleController extends Controller
      */
     public function store(VehicleRequest $request)
     {
-        $this->vehicleCreationService->createVehicle($request->validated());
+        $this->creationService->createVehicle($request->validated());
 
         return redirect()->route('vehicles.index')
             ->with('success', 'Vehicle successfully created!');;

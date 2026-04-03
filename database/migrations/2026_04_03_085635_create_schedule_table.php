@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('type', array_column(ScheduleType::cases(), 'value'));
             $table->date('day');
             $table->integer('slot');
+            $table->boolean('is_complete')->default(false);
             $table->timestamps();
         });
     }

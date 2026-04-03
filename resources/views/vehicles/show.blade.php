@@ -4,9 +4,15 @@
             Vehicles: {{ $vehicle->name }}
         </x-header-title>
 
-        <x-secondary-button href="{{ route('vehicles.create') }}" class="flex-end">
-            Create
-        </x-secondary-button>
+        <div>
+            <x-secondary-button class="flex-end" href="{{ route('vehicles.create') }}">
+                Create
+            </x-secondary-button>
+
+            <x-secondary-button class="ms-4" href="{{ route('vehicles.index') }}">
+                Back
+            </x-secondary-button>
+        </div>
     </x-slot>
 
     <h3 class="text-lg font-semibold text-gray-300 mb-4">Assembly order</h3>
@@ -25,8 +31,8 @@
     </div>
 
     <div class="mt-6">
-        <x-span-tag class="text-emerald-400" :value="__('Total:')" />
-        <span class="text-lg font-bold">${{ number_format($vehicle->calcTotal(), 2) }}</span>
+        <x-span-tag :value="__('Total:')" />
+        <span class="text-lg font-bold">${{ number_format($vehicle->calcTotalPrice(), 2) }}</span>
     </div>
 
     <form method="POST" action="{{ route('vehicles.destroy', $vehicle) }}" class="mt-4">

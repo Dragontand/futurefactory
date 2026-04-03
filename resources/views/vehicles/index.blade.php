@@ -35,8 +35,8 @@
                             {{ $vehicle->chair->module->name }}
                         </div>
                         <div>
-                            <x-span-tag class="text-emerald-400" :value="__('Total:')" />
-                            ${{ $vehicle->calcTotal() }}
+                            <x-span-tag :value="__('Total:')" />
+                            ${{ $vehicle->calcTotalPrice() }}
                         </div>
                     </div>
                 </div>

@@ -56,13 +56,23 @@ class Vehicle extends Model
     }
 
     // To calculate the total of a vehicle
-    public function calcTotal() {
+    public function calcTotalPrice() {
         return (
             $this->chassis->module->price +
             $this->propulsion->module->price +
             $this->wheel->module->price +
             $this->steeringWheel->module->price +
             $this->chair->module->price
+        );
+    }
+
+    public function calcTotalTime() {
+        return (
+            $this->chassis->module->time +
+            $this->propulsion->module->time +
+            $this->wheel->module->time +
+            $this->steeringWheel->module->time +
+            $this->chair->module->time
         );
     }
 }
