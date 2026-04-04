@@ -20,6 +20,7 @@ class VehicleController extends Controller
     {
         $this->creationService = $creationService;
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -35,6 +36,24 @@ class VehicleController extends Controller
         ])->latest()->simplePaginate(15);
 
         return view('vehicles.index', compact('vehicles'));
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Vehicle $vehicle)
+    {
+        $vehicle->load(['chassis.module', 'propulsion.module', 'wheel.module', 'steeringWheel.module', 'chair.module']);
+
+        $assemblyOrder = collect([
+            ['label' => '1. Chassis',        'moduleType' => $vehicle->chassis->module],
+            ['label' => '2. Propulsion',     'moduleType' => $vehicle->propulsion->module],
+            ['label' => '3. Wheels',         'moduleType' => $vehicle->wheel->module],
+            ['label' => '4. Steering wheel', 'moduleType' => $vehicle->steeringWheel->module],
+            ['label' => '5. Chair',          'moduleType' => $vehicle->chair->module],
+        ]);
+
+        return view('vehicles.show', compact('vehicle', 'assemblyOrder'));
     }
 
     /**
@@ -81,24 +100,6 @@ class VehicleController extends Controller
 
         return redirect()->route('vehicles.index')
             ->with('success', 'Vehicle successfully created!');;
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Vehicle $vehicle)
-    {
-        $vehicle->load(['chassis.module', 'propulsion.module', 'wheel.module', 'steeringWheel.module', 'chair.module']);
-
-        $assemblyOrder = collect([
-            ['label' => '1. Chassis',        'moduleType' => $vehicle->chassis->module],
-            ['label' => '2. Propulsion',     'moduleType' => $vehicle->propulsion->module],
-            ['label' => '3. Wheels',         'moduleType' => $vehicle->wheel->module],
-            ['label' => '4. Steering wheel', 'moduleType' => $vehicle->steeringWheel->module],
-            ['label' => '5. Chair',          'moduleType' => $vehicle->chair->module],
-        ]);
-
-        return view('vehicles.show', compact('vehicle', 'assemblyOrder'));
     }
 
     /**

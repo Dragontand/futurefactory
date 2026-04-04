@@ -8,12 +8,6 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // profile
@@ -30,9 +24,9 @@ Route::middleware('auth')->group(function () {
 
             Route::post('modules/type', 'storeType')
                 ->name('modules.storeType');
-
-            Route::resource('modules', ModuleController::class);
         });
+
+        Route::resource('modules', ModuleController::class);
     });
 
     Route::middleware('role:admin,mechanic')->group(function () {
@@ -44,8 +38,16 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:admin,schedular')->group(function () {
-        Route::get('schedules/day/{date}', [ScheduleController::class, 'show'])
-            ->name('schedules.show');
+        Route::controller(ScheduleController::class)->group(function () {
+            Route::get('schedules/cancel', 'cancel')
+                ->name('schedules.cancel');
+
+            Route::post('schedules/type', 'storeType')
+                ->name('schedules.storeType');
+
+            Route::get('schedules/date/{date}', 'show')
+                ->name('schedules.show');
+        });
 
         Route::resource('schedules', ScheduleController::class)
             ->except(['edit', 'update', 'show']);;

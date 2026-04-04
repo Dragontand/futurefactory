@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('vehicle_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('robot_id')->constrained()->cascadeOnDelete();
             $table->enum('type', array_column(ScheduleType::cases(), 'value'));
-            $table->date('day');
+            $table->date('date');
             $table->integer('slot');
             $table->boolean('is_complete')->default(false);
             $table->timestamps();

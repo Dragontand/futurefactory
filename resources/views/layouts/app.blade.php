@@ -33,6 +33,13 @@
             <main>
                 <div class="py-6">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        @if (session('success') || session('error'))
+                            <div class="fixed top-0 left-0 right-0 z-50 flex justify-center p-4 pointer-events-none">
+                                <div class="px-6 py-3 rounded-lg shadow-lg pointer-events-auto {{ session('success') ? 'bg-green-800 text-green-200' : 'bg-red-800 text-red-200' }}">
+                                    {{ session('success') ?? session('error') }}
+                                </div>
+                            </div>
+                        @endif
                         {{ $slot }}
                     </div>
                 </div>

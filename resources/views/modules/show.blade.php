@@ -37,7 +37,7 @@
                 <div>
                     <div>
                         <x-span-tag :value="__('Vehicle type:')" />
-                        {{ $module->chassis->type }}
+                        {{ ucfirst(str_replace('_', ' ', $module->chassis->type->value)) }}
                     </div>
                     <div>
                         <x-span-tag :value="__('Amount of wheels:')" />
@@ -62,7 +62,7 @@
                 <div>
                     <div>
                         <x-span-tag :value="__('Propulsion type:')" />
-                        {{ $module->propulsion->type }}
+                        {{ ucfirst(str_replace('_', ' ', $module->propulsion->type->value)) }}
                     </div>
                     <div>
                         <x-span-tag :value="__('Horsepower:')" />
@@ -75,7 +75,7 @@
                 <div>
                     <div>
                         <x-span-tag :value="__('Wheel type:')" />
-                        {{ $module->wheel->type }}
+                        {{ ucfirst(str_replace('_', ' ', $module->wheel->type->value)) }}
                     </div>
                     <div>
                         <x-span-tag :value="__('Diameter:')" />
@@ -100,7 +100,7 @@
                 <div>
                     <div>
                         <x-span-tag :value="__('Steering wheel type:')" />
-                        {{ $module->steeringWheel->type }}
+                        {{ ucfirst(str_replace('_', ' ', $module->steeringWheel->type->value)) }}
                     </div>
                     <div>
                         <x-span-tag :value="__('Special request:')" />
@@ -113,7 +113,7 @@
                 <div>
                     <div>
                         <x-span-tag :value="__('Chair type:')" />
-                        {{ $module->chair->type }}
+                        {{ ucfirst(str_replace('_', ' ', $module->chair->type->value)) }}
                     </div>
                     <div>
                         <x-span-tag :value="__('Amount:')" />

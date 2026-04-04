@@ -26,7 +26,7 @@ class StoreScheduleRequest extends FormRequest
             'type'       => 'required|in:assembly,maintenance',
             'robot_id'   => 'required_if:type,maintenance|exists:robots,id',
             'vehicle_id' => 'required_if:type,assembly|exists:vehicles,id',
-            'day'        => 'required|date|after_or_equal:today',
+            'date'        => 'required|date|after_or_equal:today',
             'slot'       => 'required|integer|between:1,4',
         ];
     }

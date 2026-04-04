@@ -28,7 +28,7 @@
                             {{ $module->time }}
                         </div>
                     </div>
-                    <img src="{{ $module->image }}" alt="" class="max-w-[150px] max-h-[100px]">
+                    <img src="{{ $module->image }}" alt="" class="max-w-[150px] max-h-[100px] rounded-lg overflow-hidden">
                 </div>
             </a>
         @endforeach

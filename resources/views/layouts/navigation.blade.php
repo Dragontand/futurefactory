@@ -1,3 +1,4 @@
+@use('App\Enums\UserRole')
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,18 +16,24 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         Dashboard
                     </x-nav-link>
+                    
+                    @if(in_array(Auth::user()->role, [UserRole::Admin, UserRole::Mechanic]))
+                        <x-nav-link :href="route('vehicles.index')" :active="request()->routeIs('vehicles.*')">
+                            Vehicles
+                        </x-nav-link>
+                    @endif
 
-                    <x-nav-link :href="route('vehicles.index')" :active="request()->routeIs('vehicles.*')">
-                        Vehicles
-                    </x-nav-link>
+                    @if(in_array(Auth::user()->role, [UserRole::Admin, UserRole::Schedular]))
+                        <x-nav-link :href="route('schedules.index')" :active="request()->routeIs('schedules.*')">
+                            Schedule
+                        </x-nav-link>
+                    @endif
 
-                    <x-nav-link :href="route('schedules.index')" :active="request()->routeIs('schedules.*')">
-                        Schedule
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('modules.index')" :active="request()->routeIs('modules.*')">
-                        Modules
-                    </x-nav-link>
+                    @if(in_array(Auth::user()->role, [UserRole::Admin, UserRole::Buyer]))
+                        <x-nav-link :href="route('modules.index')" :active="request()->routeIs('modules.*')">
+                            Modules
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

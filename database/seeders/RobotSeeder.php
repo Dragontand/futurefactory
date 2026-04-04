@@ -18,6 +18,7 @@ class RobotSeeder extends Seeder
             ['name' => 'TwoWheels', 'accountability' => RobotAccountability::TwoWheeledVehicles],
             ['name' => 'HydroBoy', 'accountability' => RobotAccountability::HydrogenVehicles],
             ['name' => 'HeavyD', 'accountability' => RobotAccountability::HeavyVehicles],
+            ['name' => 'ElectroBoy', 'accountability' => RobotAccountability::ElectricVehicles],
         ];
         foreach ($data as $item)
         {

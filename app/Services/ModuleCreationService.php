@@ -68,6 +68,12 @@ class ModuleCreationService
             'type' => $data['wheel_type'],
             'diameter' => $data['diameter'],
         ]);
+
+        /** @var Wheel $wheel */
+        $wheel = Wheel::find($moduleId);
+        if (!empty($data['compatible_chassis'])) {
+            $wheel->compatibleChassis()->attach($data['compatible_chassis']);
+        }
     }
     
     private function createSteeringWheel(int $moduleId, array $data): void

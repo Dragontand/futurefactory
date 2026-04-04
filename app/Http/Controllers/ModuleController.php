@@ -4,23 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Module;
 use App\Http\Requests\ModuleRequest;
-use App\Http\Requests\UpdateModuleRequest;
+use App\Models\Modules\Chassis;
 use App\Services\ModuleCreationService;
 use App\Services\ModuleUpdateService;
 use Illuminate\Http\Request;
 
 class ModuleController extends Controller
 {
-    private ModuleCreationService $moduleCreationService;
-    private ModuleUpdateService $moduleUpdateService;
+    private ModuleCreationService $creationService;
+    private ModuleUpdateService $updateService;
 
-    public function __construct(ModuleCreationService $moduleCreationService, ModuleUpdateService $moduleUpdateService)
+    public function __construct(ModuleCreationService $creationService, ModuleUpdateService $updateService)
     {
-        $this->moduleCreationService = $moduleCreationService;
-        $this->moduleUpdateService = $moduleUpdateService;
+        $this->creationService = $creationService;
+        $this->updateService = $updateService;
     }
 
-    private $modules = [
+    private $moduleTypes = [
         'chassis'         => 'Chassis', 
         'propulsion'      => 'Propulsion', 
         'wheel'           => 'Wheel', 
@@ -32,9 +32,7 @@ class ModuleController extends Controller
      */
     public function index()
     {
-        if (session('module_type')) {
-            session()->forget('module_type');
-        }
+        if (session('module_type')) session()->forget('module_type');
 
         $modules = Module::with(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair'])->latest()->simplePaginate(15);
         
@@ -46,7 +44,10 @@ class ModuleController extends Controller
      */
     public function create()
     {
-        return view('modules.create', ['modules' => $this->modules]);
+        $chassisByType = Chassis::with('module')->get()->groupBy('type');
+        $moduleTypes = $this->moduleTypes;
+
+        return view('modules.create', compact('chassisByType', 'moduleTypes'));
     }
 
     /**
@@ -59,12 +60,12 @@ class ModuleController extends Controller
     }
 
     /**
-     * Store the module type in the session
+     * Store the type in the session
      */
     public function storeType(Request $request)
     {
         $request->validate([
-            'type' => 'required|in:' . implode(",", array_keys($this->modules))
+            'type' => 'required|in:' . implode(",", array_keys($this->moduleTypes))
         ]);
 
         session(['module_type' => $request->type]);
@@ -77,12 +78,12 @@ class ModuleController extends Controller
      */
     public function store(ModuleRequest $request)
     {
-        $this->moduleCreationService->createModule(session('module_type'), $request->validated());
+        $this->creationService->createModule(session('module_type'), $request->validated());
 
         session()->forget('module_type');
 
         return redirect()->route('modules.index')
-            ->with('success', 'Module successfully created!');;
+            ->with('successs', 'Module successsfully created!');;
     }
 
     /**
@@ -102,7 +103,7 @@ class ModuleController extends Controller
         $module->load(['chassis', 'propulsion', 'wheel', 'steeringWheel', 'chair']);
         return view('modules.edit', [
             'module' => $module,
-            'modules' => $this->modules]);
+            'modules' => $this->moduleTypes]);
     }
 
     /**
@@ -110,10 +111,10 @@ class ModuleController extends Controller
      */
     public function update(ModuleRequest $request, Module $module)
     {
-        $this->moduleUpdateService->updateModule($module, $request->validated());
+        $this->updateService->updateModule($module, $request->validated());
 
         return redirect()->route('modules.show', $module)
-            ->with('succes', 'Module successfully edited!');
+            ->with('success', 'Module successsfully edited!');
     }
 
     /**
@@ -124,6 +125,6 @@ class ModuleController extends Controller
         $module->delete();
 
         return redirect()->route('modules.index')
-            ->with('success', 'Module successfully deleted!');;
+            ->with('successs', 'Module successsfully deleted!');;
     }
 }

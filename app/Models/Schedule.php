@@ -17,7 +17,7 @@ class Schedule extends Model
     protected function casts(): array
     {
         return [
-            'day' => 'date',
+            'date' => 'date',
             'type' => ScheduleType::class,
             'is_complete' => 'boolean',
         ];

@@ -50,6 +50,8 @@ class ModuleRequest extends FormRequest
             'wheel' => array_merge($baseRules, [
                 'wheel_type'            => ['required', 'string', Rule::in(WheelType::cases())],
                 'diameter'              => ['required', 'integer', 'min:1'],
+                'compatible_chassis'    => ['nullable', 'array'],
+                'compatible_chassis.*'  => ['exists:chassis,module_id'],
             ]),
             'steering_wheel' => array_merge($baseRules, [
                 'steering_wheel_type'   => ['required', 'string', Rule::in(SteeringWheelType::cases())],

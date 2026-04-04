@@ -9,7 +9,7 @@
         </x-header-title>
     </x-slot>
 
-    <!-- Module type -->
+    <!-- Type selection -->
     @if (!session('module_type'))
         <form method="POST" action="{{ route('modules.storeType') }}">
             @csrf
@@ -17,7 +17,7 @@
             <div class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
                 <x-input-label :value="__('Type module')" />
                 <div class="flex gap-3 col-span-full">
-                    @foreach ($modules as $value => $label)
+                    @foreach ($moduleTypes as $value => $label)
                     <label for="{{ $value }}"
                         class="flex items-center pl-4 pr-6 py-3 border border-gray-600 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
 
@@ -69,7 +69,7 @@
                 </div>
 
                 <!-- For Chassis specific inputs -->
-                @if (session('module_type') === array_keys($modules)[0])
+                @if (session('module_type') === array_keys($moduleTypes)[0])
                     <!-- Vehicle type -->
                     <div class="sm:col-span-3">
                         <x-input-label for="vehicle_type" :value="__('Vehicle type')" />
@@ -114,7 +114,7 @@
                 @endif
 
                 <!-- For Propulsion specific inputs -->
-                @if (session('module_type') === array_keys($modules)[1])
+                @if (session('module_type') === array_keys($moduleTypes)[1])
                     <!-- Propulsion type -->
                     <div class="sm:col-span-3">
                         <x-input-label for="propulsion_type" :value="__('Propulsion type')" />
@@ -134,7 +134,7 @@
                 @endif
 
                 <!-- For Wheel specific inputs -->
-                @if (session('module_type') === array_keys($modules)[2])
+                @if (session('module_type') === array_keys($moduleTypes)[2])
                     <!-- Wheel type -->
                     <div class="sm:col-span-3">
                         <x-input-label for="wheel_type" :value="__('Wheel type')" />
@@ -152,10 +152,32 @@
                         <x-text-input id="diameter" class="block mt-1 w-full" type="number" name="diameter" min="0" :value="old('diameter')" placeholder="in mm" required/>
                         <x-input-error :messages="$errors->get('diameter')" class="mt-2" />
                     </div>
+
+                    <!-- Compatible chassis -->
+                    <div class="sm:col-span-full">
+                        <x-input-label :value="__('Compatible chassis')" />
+                        <x-input-error :messages="$errors->get('compatible_chassis')" class="mt-2" />
+
+                        @foreach ($chassisByType as $type => $chassisGroup)
+                            <h4 class="mt-4 mb-2 text-sm font-semibold text-gray-300">
+                                {{ ucfirst(str_replace('_', ' ', $type)) }}
+                            </h4>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                @foreach ($chassisGroup as $chassis)
+                                    <label class="flex items-center gap-2 px-3 py-2 border border-gray-600 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
+                                        <input type="checkbox" name="compatible_chassis[]" value="{{ $chassis->module_id }}"
+                                            class="w-4 h-4 text-blue-600 bg-gray-900 border-gray-500 rounded focus:ring-2 focus:ring-blue-500"
+                                            @checked(is_array(old('compatible_chassis')) && in_array($chassis->module_id, old('compatible_chassis')))>
+                                        <span class="text-sm text-gray-200">{{ $chassis->module->name }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @endforeach
+                    </div>
                 @endif
 
                 <!-- For Steering wheel specific inputs -->
-                @if (session('module_type') === array_keys($modules)[3])
+                @if (session('module_type') === array_keys($moduleTypes)[3])
                     <!-- Steering wheel type -->
                     <div class="sm:col-span-3">
                         <x-input-label for="steering_wheel_type" :value="__('Steering wheel type')" />
@@ -177,7 +199,7 @@
                 @endif
 
                 <!-- For Chair specific inputs -->
-                @if (session('module_type') === array_keys($modules)[4])
+                @if (session('module_type') === array_keys($moduleTypes)[4])
                     <!-- Upholstery type -->
                     <div class="sm:col-span-3">
                         <x-input-label for="upholstery_type" :value="__('Upholstery type')" />
